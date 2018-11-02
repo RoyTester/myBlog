@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}登录{% endblock %}
+{% block body %}
+    <div class="jumbotron" style="background-color:#2c3e50">
+	<div class="container">
+		<h2 style="color:#E7DBDB">Hello, I am ZRUI!</h2>
+		<p class="lead" style="color:#E7DBDB">wanna know more , please click </p>
+            <a href="{{ url_for('main.about') }}"><button class="btn btn-danger btn-wide the-font">关于我</button></a>
+	</div>
+</div>
+    <div class="container">
+    {% for message in get_flashed_messages() %}
+        <div class="row"><div class="col-lg-4 col-lg-push-4 col-sm-6 col-sm-push-3">
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}</div></div>
+    {% endfor %}
+    </div>
+    </div>
+<div class="container">
+<div class="row">
+    <div class="col-lg-4 col-lg-push-4 col-sm-6 col-sm-push-3">
+        <section class="content"><div class="card">
+    <form role="form" method="POST">{{ form.hidden_tag() }}
+{#<div class="signin" style="height:900px;width:400px;position:fixed;top:25%;left:40%;display:none" id="vzinv_signin">#}
+	<div class="panel-success">
+		<div class="panel-heading"><h1 class="panel-title">欢迎登录</h1></div>
+		<div class="panel-body">
+
+			<div class="login-form">
+            <div class="control-group">
+              <label class="login-field-icon fui-man-16" for="login-name">{{ form.username.label }}</label>
+              {{ form.username(class='form-control') }}
+            </div>
+
+            <div class="control-group">
+              <label class="login-field-icon fui-lock-16" for="login-pass">{{ form.password.label }}</label>
+              {{ form.password(class="form-control") }}
+            </div>
+
+            	<span class="icon"></span>
+            	<span class="icon-to-fade"></span>
+            	{{ form.remember_me() }}{{ form.remember_me.label }}
+
+
+            {{ form.submit(class="btn btn-primary btn-large btn-block") }}
+
+{#          </div>#}
+		</div>
+	</div>
+        <div class="panel-footer" style="background-color:inherit"></div>
+    </div>
+</form>
+        </div></section></div></div></div>
+{% endblock %}

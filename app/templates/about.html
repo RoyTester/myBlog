@@ -1,0 +1,48 @@
+{% extends  "base.html" %}
+
+{% block title %}
+关于我
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+<div class="row">
+	<div class="col-md-12">
+		<article class="article the-font">
+			<div class="comtainer">
+				<div class="row">
+					<div class="col-md-12">
+						<br>
+
+						<div align="center"><img src="{{ url_for('static',filename='avatar.png') }}" style="height:220px;width:220px;border-radius:110px;display:block;text-align:center" align="center"></div>
+						<br>
+						<p class="lead text-center">ZRUI</p>
+						<p class="text-center"><em><span style="color:#ABAAAA">Make It Happen!	</span></em></p>
+						<br>
+
+
+						<p class="palette-paragraph"><strong>这是我的个人博客网站，喜欢，可以按下"❤"按钮为我加油(ง •_•)ง</strong></p>
+						<div  style="cursor:pointer" class="btn btn-danger btn-large btn-block btn-like-add"><span class="glyphicon glyphicon-heart" aria-hidden="True"></span></div>
+						<hr>
+						<p >已经有了这么多<strong>👍</strong>:<a href="#"><span id="liked">{{ liked.count }}</span></a></p>
+					</div>
+
+					<hr>
+					<br>	
+					<br>
+
+					</div>
+					
+				</div>
+			
+		</article>
+
+  	</div>
+</div>
+</div>
+
+
+
+
+{% endblock %}
