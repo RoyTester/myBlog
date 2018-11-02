@@ -4,7 +4,6 @@
 # datetime:2018/10/24 18:26
 # software:PyCharm
 import os
-import pymysql
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
