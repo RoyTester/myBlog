@@ -5,12 +5,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{% block title %}{% endblock %} | myBlog</title>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dist/css/flat-ui.min.css') }}">
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='mystyle.css') }}">
+    <link href="https://cdn.bootcss.com/flat-ui/2.3.0/css/flat-ui.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='mystyle.css') }}">
 
 	<link rel="shortcut icon" href="{{ url_for('static',filename='favicon.ico') }}">
 
-	<script type="text/javascript" src="{{ url_for('static',filename='dist/js/vendor/jquery.min.js') }}"></script>
+	<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 	<script type="text/javascript" src="{{ url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
 
     {{ moment.include_moment() }}
