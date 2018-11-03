@@ -53,11 +53,11 @@ def write():
             category = Category(tag=form.category.data)
             db.session.add(category)
             db.session.commit()
-        post=Post(title=form.title.data,
-                  body=form.body.body,
-                  summary=form.summary.data,
-                  user=User.query.first(),
-                  category=category)
+        post = Post(title=form.title.data,
+                    body=form.body.data,
+                    summary=form.summary.data,
+                    user=User.query.first(),
+                    category=category)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('main.post', id=post.id))
