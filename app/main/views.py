@@ -69,6 +69,11 @@ def edit(id):
     form = EditForm()
     post = Post.query.get_or_404(id)
     if form.validate_on_submit():
+        post.title = form.title.data
+        post.body = form.body.data
+        post.summary = form.summary.data
+        db.session.add(post)
+        db.session.commit()
         return redirect(url_for('main.post', id=post.id))
     form.title.data = post.title
     form.body.data = post.body
