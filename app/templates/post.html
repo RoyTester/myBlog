@@ -23,7 +23,7 @@
 			
 			<div style="border-top:1px solid #EBEBEB;padding:10px 5px;margin-top:20px;">
 				<a href="{{ url_for('main.category', id=post.category.id) }}"><span class="label label-default"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> {{ post.category.tag }}</span></a>
-                {% if current_user.is_authenticated%}<a href="{{ url_for('main.edit', id=post.category.id) }}"><span class="btn btn-primary btn-wide text-left" style="float:right"><span class="glyphicon glyphicon-edit"  aria-hidden="true"></span> 编辑</span></a>
+                {% if current_user.is_authenticated%}<a href="{{ url_for('main.edit', id=post.id) }}"><span class="btn btn-primary btn-wide text-left" style="float:right"><span class="glyphicon glyphicon-edit"  aria-hidden="true"></span> 编辑</span></a>
                 {% endif %}<a href="{{ url_for('main.index') }}" ><span class=" btn btn-primary btn-wide text-left" style="float: right;margin-right: 5px"><span class=" glyphicon glyphicon-log-out" aria-hidden="true"></span> 返回首页</span></a>
 
 			</div>
