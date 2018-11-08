@@ -5,7 +5,7 @@
 # software:PyCharm
 from app import create_app, db
 import os
-from app.models import User, Role, Post, Category, Like
+from app.models import User, Role, Post, Category, Like, Comment
 from dotenv import load_dotenv
 from flask_migrate import Migrate, upgrade
 import click
@@ -21,7 +21,7 @@ migrate = Migrate(app, db)
 
 @app.shell_context_processor
 def make_shell_context():
-    return dict(db=db, User=User, Role=Role, Post=Post, Category=Category, Like=Like)
+    return dict(db=db, User=User, Role=Role, Post=Post, Category=Category, Like=Like, Comment=Comment)
 
 # command后需要()
 @app.cli.command()
@@ -38,7 +38,7 @@ def deploy():
     upgrade()
 
     # create or update user roles
-    Role.add_role()
+    # Role.add_role()
 
     # ensure all users are following themselves
     # User.add_self_follows()

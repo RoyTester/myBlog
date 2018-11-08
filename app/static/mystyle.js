@@ -93,6 +93,7 @@ $(document).ready(function(){
 		});
 		$(".form-add").click(function(){
 			$("#form_category").css("display","block");
+			$("#form_comment").css("display", "block")
 			$(".form-btn").addClass("btn-info");
 			$(".form-add").addClass("btn-info");
 			$(".form-add").removeClass("btn-inverse");

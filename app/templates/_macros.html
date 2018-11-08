@@ -1,4 +1,4 @@
-{% macro pagination_widget(pagination, endpoint) %}
+{% macro pagination_widget(pagination, endpoint, fragment='') %}
 <ul class="pagination pagination-minimal" style="background-color:#B1BAB4" align="center">
     
     <li {% if not pagination.has_prev %} class="disabled previous" {% else %} class="previous" {% endif %} >

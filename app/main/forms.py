@@ -21,3 +21,7 @@ class EditForm(FlaskForm):
     summary = PageDownField('概要', validators=[DataRequired()])
     body = PageDownField('内容', validators=[DataRequired()])
     submit = SubmitField('提交')
+
+class CommentForm(FlaskForm):
+    body = StringField('评论', validators=[DataRequired()])
+    submit = SubmitField('提交')

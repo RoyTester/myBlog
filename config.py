@@ -21,6 +21,7 @@ class Config:
     MYBLOG_MAIL_SUBJECT_PREFIX = '[myBlog]'
     MYBLOG_MAIL_SENDER = 'myBlog Admin <myBlog@example.com>'
     POSTS_PER_PAGE = 5
+    COMMENTS_PER_PAGE = 20
     SSL_REDIRECT = False
 
     @staticmethod

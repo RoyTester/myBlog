@@ -32,7 +32,7 @@
 			<div style="border-top:1px solid #EBEBEB;padding:10px 5px;margin-top:20px;">
                 <p><a href="{{url_for('main.category',id=post.category.id) }}"><span class="label label-default text-left"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span> {{ post.category.tag }}</span></a>
 				<a href="{{ url_for('main.post', id=post.id) }}" style="float:right"><button class="btn  btn-primary btn-wide text-right"><span class="glyphicon glyphicon-fire glyphicon " aria-hidden="true"></span>  了解更多</button>
-                </a></p>
+                </a><span style="float: right" class="label label-primary"><span class="glyphicon glyphicon-comment"></span>  {{ post.comments.count() }}评论</span> </p>
 			</div>
 		</article>
 	{% endfor %}

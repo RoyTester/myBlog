@@ -1,0 +1,16 @@
+<article class="article">
+<h4 id="comments">评论</h4>
+<ul class="comments">
+
+    {% for comment in comments %}
+    <li class="coment the-font">
+        <div class="comment-content">
+        <p><span class="icon-user"><span class="name"><strong>{{ comment.author }}</strong></span></span>
+            &nbsp;&nbsp;<span class="ago">{{ moment(comment.time).fromNow(refresh=True) }}</span>
+        <sapn class="badge text-right" style="float:right">{{ post.comments.all().index(comment)}}</sapn>
+        </p>
+        <p>{{ comment.body_html |safe}}</p>
+        </div>
+    </li>
+    {% endfor %}
+</ul></article>

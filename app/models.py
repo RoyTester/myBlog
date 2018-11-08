@@ -11,6 +11,7 @@ import datetime
 from markdown import markdown
 import bleach
 
+
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
@@ -72,14 +73,14 @@ class Post(db.Model):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li',
                         'ol', 'pre', 'strong', 'ul', 'h1', 'h2', 'h3', 'p', 'br', 'img']
         target.body_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),
-                                                                tags=allowed_tags, strip=False))
+                                                            tags=allowed_tags, strip=True))
 
     @staticmethod
     def on_change_summary(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li',
                         'ol', 'pre', 'strong', 'ul', 'h1', 'h2', 'h3', 'p', 'br', 'img']
         target.summary_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),
-                                                                tags=allowed_tags, strip=False))
+                                                                tags=allowed_tags, strip=True))
 
 
 db.event.listen(Post.body, 'set', Post.on_change_body)
@@ -107,3 +108,24 @@ class Like(db.Model):
     __tablename__ = 'like'
     id = db.Column(db.Integer, primary_key=True)
     count = db.Column(db.Integer, default=0)
+
+class Comment(db.Model):
+    __tablename__ = 'comments'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    body_html = db.Column(db.Text)
+    time = db.Column(db.DateTime, index=True, default=datetime.datetime.utcnow)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    disabled = db.Column(db.Boolean)
+    author = db.Column(db.Text)
+    post = db.relationship('Post', backref=db.backref('comments', lazy='dynamic'))
+
+    @staticmethod
+    def on_changed_body(target, value, oldvalue, initiator):
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'code', 'em', 'i', 'strong']
+        target.body_html = bleach.linkify(bleach.clean(
+            markdown(value, output_format='html'),
+            tags=allowed_tags, strip=True))
+
+
+db.event.listen(Comment.body, 'set', Comment.on_changed_body)
