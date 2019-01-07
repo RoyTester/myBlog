@@ -1,5 +1,5 @@
 import unittest
-from app.models import User, Role
+from app.models import User, Role, Permission
 from app import db, create_app
 
 class UserModelTestCase(unittest.TestCase):
@@ -8,6 +8,7 @@ class UserModelTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
+        Role.add_role()
 
     def tearDown(self):
         db.session.remove()
@@ -32,3 +33,8 @@ class UserModelTestCase(unittest.TestCase):
         u1 = User(password='cat')
         u2 = User(password='cat')
         self.assertFalse(u1.password_hash == u2.password_hash)
+
+    def test_admin_role(self):
+        r = Role.query.first()
+        u = User(username='z', email='a', password='z', role=r)
+        self.assertTrue(u.can(Permission.ADMIN))

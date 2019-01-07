@@ -29,7 +29,7 @@ def post(count=10):
     fake = Faker()
     for i in range(count):
         u = User.query.first()
-        c = Category(tag=fake.name(), count=1)
+        c = Category(tag=fake.name())
         p = Post(
             title=fake.text(),
             body=fake.text(),

@@ -5,28 +5,64 @@
 # software:PyCharm
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manager
 import datetime
 from markdown import markdown
 import bleach
+from itsdangerous import Serializer
+from flask import current_app, url_for, request
+from app.exceptions import ValidationError
 
+class Permission:
+    FOLLOW = 1
+    COMMENT = 2
+    WRITE = 4
+    MODERATE = 8
+    ADMIN = 16
 
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
+    default = db.Column(db.Boolean, default=False, index=True)
+    permission = db.Column(db.Integer)
     users = db.relationship('User', backref='role', lazy='dynamic')
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if self.permission is None:
+            self.permission = 0
 
     def __repr__(self):
         return '<Role %r>' % self.name
 
     @staticmethod
     def add_role():
-        role = Role(name='admin')
+        role = Role.query.filter_by(name='admin').first()
+        if role is None:
+            role = Role(name='admin')
+        role.reset_perm()
+        for attr in Permission.__dict__:
+            if attr.isupper():
+                role.add_perm(getattr(Permission, attr))
+        role.default = (role.name == 'user')
         db.session.add(role)
         db.session.commit()
 
+    def has_perm(self, perm):
+        return self.permission & perm == perm
+
+    def add_perm(self, perm):
+        if not self.has_perm(perm):
+            self.permission += perm
+
+    def remove_perm(self, perm):
+        if self.has_perm(perm):
+            self.permission -= perm
+
+    def reset_perm(self):
+        self.permission = 0
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -51,10 +87,49 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def generate_auth_token(self, expiration):
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        s.dumps({'id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
+
+    def to_json(self):
+        return {
+            'url': url_for('api.get_user', id=self.id),
+            'username': self.username,
+            'posts_url': url_for('api.get_user_posts', id=self.id),
+            'post_count':self.posts.count()
+        }
+
+    def can(self, perm):
+        return self.role is not None and self.role.has_perm(perm)
+    
+    def is_admin(self):
+        return self.can(Permission.ADMIN)
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def is_admin(self):
+        return False
+    
+    def can(self, perm):
+        return False
+
+
+login_manager.anonymous_user = AnonymousUser
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -81,6 +156,35 @@ class Post(db.Model):
                         'ol', 'pre', 'strong', 'ul', 'h1', 'h2', 'h3', 'p', 'br', 'img']
         target.summary_html = bleach.linkify(bleach.clean(markdown(value, output_format='html'),
                                                                 tags=allowed_tags, strip=True))
+    def to_json(self):
+        return {
+            'url': url_for('api.get_post', id=self.id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'title': self.title,
+            'time': self.time,
+            'summary': self.summary,
+            'summary_html': self.summary_html,
+            # 'user_url': url_for('api.get_user', id=self.user_id),
+            # 'category_url': url_for('api.get_category', id=self.category_id),
+            # 'comments_url': url_for('api.get_post_comments', id=self.id),
+            'comment_count': self.comments.count()
+        }
+
+    @staticmethod
+    def from_json(json_post):
+        body = json_post.get('body')
+        title = json_post.get('title')
+        summary = json_post.get('summary')
+        category_data = json_post.get('category')
+        if body == '' or title == '' or summary == '' or category_data == '':
+            return ValidationError('message missing')
+        category = Category.query.filter_by(tag=category_data).first()
+        if category is None:
+            category = Category(tag=category_data)
+            db.session.add(category)
+            db.session.commit()
+        return Post(body=body, title=title, summary=summary, category=category)
 
 
 db.event.listen(Post.body, 'set', Post.on_change_body)
@@ -127,5 +231,20 @@ class Comment(db.Model):
             markdown(value, output_format='html'),
             tags=allowed_tags, strip=True))
 
+    def to_json(self):
+        return {
+            'url': url_for('api.get_comment', id=self.id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'time': self.time,
+            'post_url': url_for('api.get_post', id=self.post_id),
+            'author': self.author,
+        }
 
+    @staticmethod
+    def from_json(json_comment):
+        body = json_comment.get('body')
+        if body is None or body == '':
+            raise ValidationError('comments does not have a body')
+        return Comment(body=body)
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
