@@ -32,7 +32,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'dev_data.sqlite')
+        'mysql+pymysql://develop:develop@localhost:3306/blog'
 
 class TestingConfig(Config):
     TESTING = True

@@ -34,6 +34,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+dev_data.sqlite
 
 # SQLite databases
 *.sqlite
